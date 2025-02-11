@@ -35,9 +35,9 @@ static const char *INDEX_HTML = "<!DOCTYPE html>\
         }\
         function sendCommand() {\
             var power = document.getElementById('power').checked ? 1 : 0;\
-            var speed = parseInt(document.getElementById('speed').value, 10); /* ⚠️ Преобразуем в число */ \
+            var speed = parseInt(document.getElementById('speed').value, 10);  \
             document.getElementById('speed_label').innerText = 'Скорость: ' + speed;\
-            console.log('Sending: ', JSON.stringify({power: power, speed: speed})); /* ⚠️ Логируем в консоль */ \
+            console.log('Sending: ', JSON.stringify({power: power, speed: speed}));  \
             fetch('/control', {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({power: power, speed: speed})});\
         }\
         window.onload = loadSettings;\

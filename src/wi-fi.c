@@ -1,5 +1,5 @@
-#include <string.h> // ⚠️ Добавили для strlen() и strcpy()
 #include "wi-fi.h"
+#include <string.h>
 #include "esp_log.h"
 #include "esp_wifi.h"
 #include "nvs_flash.h"
@@ -7,10 +7,10 @@
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 
-#define MAX_WIFI_RETRIES 3 // ⚠️ Количество попыток подключения
+#define MAX_WIFI_RETRIES 3
 
 static const char *TAG = "WiFiManager";
-static int wifi_retries = 0; // Счётчик попыток
+static int wifi_retries = 0;
 
 /**
  * @brief Обработчик Wi-Fi событий
@@ -30,14 +30,14 @@ static void wifi_event_handler(void *arg, esp_event_base_t event_base, int32_t e
             {
                 wifi_retries++;
                 ESP_LOGW(TAG, "Wi-Fi connection failed (%d/%d). Retrying...", wifi_retries, MAX_WIFI_RETRIES);
-                vTaskDelay(pdMS_TO_TICKS(2000)); // ⚠️ Ждём 2 секунды перед новой попыткой
+                vTaskDelay(pdMS_TO_TICKS(2000));
                 esp_wifi_connect();
             }
             else
             {
                 ESP_LOGE(TAG, "Failed to connect after %d attempts. Resetting Wi-Fi credentials!", MAX_WIFI_RETRIES);
 
-                // ⚠️ Очищаем ТОЛЬКО SSID и пароль
+                //  Очищаем ТОЛЬКО SSID и пароль
                 nvs_handle_t nvs_handle;
                 if (nvs_open("storage", NVS_READWRITE, &nvs_handle) == ESP_OK)
                 {
@@ -57,7 +57,7 @@ static void wifi_event_handler(void *arg, esp_event_base_t event_base, int32_t e
     else if (event_base == IP_EVENT && event_id == IP_EVENT_STA_GOT_IP)
     {
         ESP_LOGI(TAG, "Connected to Wi-Fi successfully!");
-        wifi_retries = 0; // ⚠️ Сбрасываем счётчик попыток после успешного подключения
+        wifi_retries = 0;
     }
 }
 
@@ -68,7 +68,6 @@ void wifi_init()
 {
     ESP_LOGI(TAG, "Initializing Wi-Fi...");
 
-    // ⚠️ Инициализируем NVS (нужен для хранения Wi-Fi данных)
     esp_err_t ret = nvs_flash_init();
     if (ret == ESP_ERR_NVS_NO_FREE_PAGES || ret == ESP_ERR_NVS_NEW_VERSION_FOUND)
     {
@@ -99,7 +98,7 @@ void wifi_init()
 
     ESP_LOGI(TAG, "Loading Wi-Fi credentials from NVS...");
 
-    // ⚠️ Загружаем сохранённые данные Wi-Fi из NVS
+    //  Загружаем сохранённые данные Wi-Fi из NVS
     nvs_handle_t nvs_handle;
     char ssid[32] = "";
     char password[64] = "";
@@ -136,7 +135,7 @@ void wifi_init()
 
     ESP_LOGI(TAG, "Starting Wi-Fi in AP+STA mode...");
 
-    ESP_ERROR_CHECK(esp_wifi_set_mode(WIFI_MODE_APSTA)); // ⚠️ Включаем одновременно STA + AP
+    ESP_ERROR_CHECK(esp_wifi_set_mode(WIFI_MODE_APSTA)); //  Включаем одновременно STA + AP
     ESP_ERROR_CHECK(esp_wifi_set_config(ESP_IF_WIFI_STA, &wifi_config_sta));
     ESP_ERROR_CHECK(esp_wifi_set_config(ESP_IF_WIFI_AP, &wifi_config_ap));
     ESP_ERROR_CHECK(esp_wifi_start());
